@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UrbanEye Smart Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="UrbanEye - Smart City Complaint Reporting and Tracking System">
+  <meta name="theme-color" content="#050816">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Star particle canvas -->
+<canvas id="starCanvas" aria-hidden="true"></canvas>
+
+<!-- Sci-fi background layers -->
+<div class="sci-fi-bg" aria-hidden="true">
+  <div class="fog-layer fog-1"></div>
+  <div class="fog-layer fog-2"></div>
+  <div class="floating-islands">
+    <div class="island island-1"></div>
+    <div class="island island-2"></div>
+    <div class="island island-3"></div>
+  </div>
+  <div class="city-skyline"></div>
+</div>
+
+<!-- ========== PAGE 1: CHOOSE ========== -->
+<div id="choosePage" class="auth-box" role="region" aria-label="Choose Sign In or Sign Up">
+  <div class="logo-container">
+    <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="UrbanEye Logo" class="main-logo">
+  </div>
+  <h2>UrbanEye</h2>
+  <div class="tagline">AI-Powered Smart City Governance Platform</div>
+  <p class="supporting-text">Report civic issues, monitor resolutions, and help build smarter communities.</p>
+
+  <div class="feature-badges">
+    <span class="feature-badge">📍 Geospatial Mapping</span>
+    <span class="feature-badge">🤖 AI Complaint Analysis</span>
+    <span class="feature-badge">📊 Real-Time Analytics</span>
+    <span class="feature-badge">🏛️ Government Dashboard</span>
+  </div>
+
+  <div class="auth-actions">
+    <button type="button" onclick="openLogin()">Sign In to Dashboard</button>
+    <button type="button" onclick="openSignup()" class="secondary-btn">Create New Account</button>
+  </div>
+
+  <div class="trust-indicators">
+    <span>🔒 Secure Access</span>
+    <span>📡 Live Monitoring</span>
+    <span>🏛️ Government Platform</span>
+  </div>
+</div>
+
+<!-- ========== PAGE 2: LOGIN ========== -->
+<div id="loginPage" class="auth-box hidden" role="region" aria-label="Sign In Form">
+  <div class="logo-container">
+    <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="UrbanEye Logo" class="main-logo">
+  </div>
+  <h2>UrbanEye</h2>
+  <div class="tagline">AI-Powered Smart City Governance Platform</div>
+  <p class="supporting-text">Report civic issues, monitor resolutions, and help build smarter communities.</p>
+  <div class="form-group">
+    <label for="loginEmail">Email Address</label>
+    <input type="email" id="loginEmail" placeholder="e.g. citizen@smartcity.gov" autocomplete="email">
+  </div>
+  <div class="form-group">
+    <label for="loginPassword">Credential Key</label>
+    <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <div class="form-group">
+    <label>Identity Verification</label>
+    <div class="captcha-box">
+      <span id="captchaText"></span>
+      <input type="text" id="captchaInput" placeholder="Verification Code">
+    </div>
+  </div>
+  <button type="button" onclick="login()">Authenticate & Enter</button>
+  <button type="button" class="link-btn" onclick="goBack()">← Return to Gateway</button>
+  <div class="trust-indicators">
+    <span>🔒 Secure Access</span>
+    <span>📡 Live Monitoring</span>
+    <span>🏛️ Government Platform</span>
+  </div>
+</div>
+
+<!-- ========== PAGE 3: SIGNUP ========== -->
+<div id="signupPage" class="auth-box hidden" role="region" aria-label="Sign Up Form">
+  <div class="logo-container">
+    <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="UrbanEye Logo" class="main-logo">
+  </div>
+  <h2>UrbanEye</h2>
+  <div class="tagline">AI-Powered Smart City Governance Platform</div>
+  <p class="supporting-text">Report civic issues, monitor resolutions, and help build smarter communities.</p>
+  <div class="form-group">
+    <label>Legal Name</label>
+    <div class="name-row">
+      <input type="text" id="firstName" placeholder="First Name" autocomplete="given-name">
+      <input type="text" id="lastName" placeholder="Last Name" autocomplete="family-name">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="mobile">Mobile Number</label>
+    <input type="text" id="mobile" placeholder="+91 XXXXX XXXXX" autocomplete="tel">
+  </div>
+  <div class="form-group">
+    <label for="signupEmail">Official Email</label>
+    <input type="email" id="signupEmail" placeholder="yourname@example.com" autocomplete="email">
+  </div>
+  <div class="form-group">
+    <label for="signupPassword">Security Password</label>
+    <input type="password" id="signupPassword" placeholder="Min. 6 characters" autocomplete="new-password">
+  </div>
+  <div class="form-group">
+    <label>Security Check</label>
+    <div class="captcha-box">
+      <span id="captchaText2"></span>
+      <input type="text" id="captchaInput2" placeholder="Verification Code">
+    </div>
+  </div>
+  <button type="button" onclick="signup()">Create Profile</button>
+  <button type="button" class="link-btn" onclick="goBack()">← Return to Gateway</button>
+  <div class="trust-indicators">
+    <span>🔒 Secure Access</span>
+    <span>📡 Live Monitoring</span>
+    <span>🏛️ Government Platform</span>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div id="dashboard" class="hidden">
+  <header class="topbar">
+    <div class="topbar-left-brand">
+      <div class="topbar-emblem">🏛️</div>
+      <div class="topbar-title-wrapper">
+        <h2>UrbanEye<span>.</span></h2>
+        <span class="topbar-subtitle">Ministry of Urban Development & Smart Infrastructure</span>
+        <span class="topbar-country">Government of India</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-badge">
+        <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="User Icon">
+        <span id="userLabel">Loading...</span>
+      </div>
+      <button type="button" onclick="logout()">Terminate Session</button>
+    </div>
+  </header>
+
+  <section class="cards">
+    <div class="card" id="card-report" data-tilt onclick="showSection('report')">
+      <span class="card-badge">ACTIVE</span>
+      <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
+      <h3>File Grievance</h3>
+      <div class="card-subtitle">Register public concerns</div>
+      <div class="card-stats" id="stats-report">Today: 0 Reports &nbsp;|&nbsp; Pending: 0</div>
+    </div>
+    <div class="card" id="card-track" data-tilt onclick="showSection('track')">
+      <span class="card-badge">LIVE</span>
+      <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+      <h3>Monitor Status</h3>
+      <div class="card-subtitle">Real-time track updates</div>
+      <div class="card-stats" id="stats-track">Active Cases: 0 &nbsp;|&nbsp; Resolved Today: 0</div>
+    </div>
+    <div class="card" id="card-map" data-tilt onclick="showSection('map')">
+      <span class="card-badge">LIVE</span>
+      <div style="font-size: 32px; margin-bottom: 8px;">🗺️</div>
+      <h3>Geospatial Map</h3>
+      <div class="card-subtitle">Metro grid complaint map</div>
+      <div class="card-stats" id="stats-map">Mapped Incidents: 0 &nbsp;|&nbsp; Hotspots: 0</div>
+    </div>
+    <div class="card admin-only" id="card-admin" data-tilt onclick="showSection('admin')">
+      <span class="card-badge">ADMIN</span>
+      <div style="font-size: 32px; margin-bottom: 8px;">🛡️</div>
+      <h3>Control Panel</h3>
+      <div class="card-subtitle">Resolve reported issues</div>
+      <div class="card-stats" id="stats-admin">Admin Action Required</div>
+    </div>
+    <div class="card admin-only" id="card-analytics" data-tilt onclick="showSection('analytics')">
+      <span class="card-badge">ADMIN</span>
+      <div style="font-size: 32px; margin-bottom: 8px;">📈</div>
+      <h3>Analytics Board</h3>
+      <div class="card-subtitle">Ministry resolution metrics</div>
+      <div class="card-stats" id="stats-analytics">Operations Dashboard</div>
+    </div>
+  </section>
+
+  <main class="container">
+    <section id="report" class="section hidden" data-tilt>
+      <h3>
+        <span><span class="section-icon">📋</span> Intelligence Report</span>
+        <span class="header-badge">Reporting Portal</span>
+      </h3>
+      <div class="form-group">
+        <label for="issueType">Category of Incident</label>
+        <select id="issueType" class="placeholder-selected" required>
+          <option value="" disabled selected hidden>Select Incident Category</option>
+          <option>Infrastructure (Potholes)</option>
+          <option>Water Supply</option>
+          <option>Garbage Collection</option>
+          <option>Street Lighting</option>
+          <option>Drainage Issues</option>
+          <option>Public Safety</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="desc">Detailed Description</label>
+        <textarea id="desc" rows="4" placeholder="Provide precise details of the incident..."></textarea>
+        <!-- AI Intelligence Analysis Panel -->
+        <div id="aiAnalysisPanel" class="ai-analysis-card hidden">
+          <h4>🤖 AI Intelligence Analysis</h4>
+          <div class="ai-analysis-grid">
+            <div class="ai-analysis-item">
+              <span class="ai-item-label">Detected Category</span>
+              <strong id="aiCategory">—</strong>
+            </div>
+            <div class="ai-analysis-item">
+              <span class="ai-item-label">Priority Level</span>
+              <strong id="aiPriority">—</strong>
+            </div>
+            <div class="ai-analysis-item">
+              <span class="ai-item-label">Department</span>
+              <strong id="aiDepartment">—</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Image Evidence Upload System -->
+      <div class="form-group" style="margin-top: 15px;">
+        <label style="font-weight: 600; color: var(--primary);">Evidence Image Upload</label>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+          <input type="file" id="imageUpload" accept=".jpg,.jpeg,.png" style="display: none;" onchange="previewUploadImage(event)">
+          <button type="button" class="secondary-btn" onclick="document.getElementById('imageUpload').click()" style="margin: 0; width: auto; padding: 8px 16px;">📎 Upload Image</button>
+          <span id="uploadStatusText" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">No image attached</span>
+        </div>
+        <div id="imagePreviewContainer" class="hidden" style="margin-top: 10px; border-radius: 6px; border: 1px solid var(--border); overflow: hidden; width: 100px; height: 100px; position: relative;">
+          <img id="imagePreview" src="" alt="Evidence Preview" style="width: 100%; height: 100%; object-fit: cover;">
+          <button type="button" onclick="clearUploadedImage()" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 10px; font-weight: bold;">&times;</button>
+        </div>
+      </div>
+
+      <div class="location-box">
+        <label>Map Geo-Location</label>
+        <button type="button" onclick="getLocation()" class="secondary-btn">📍 Map Geo-Location</button>
+        <div id="locText"><span class="location-status-badge status-badge-gold">GPS WAITING</span></div>
+      </div>
+      <button type="button" onclick="submitComplaint()">📋 SUBMIT OFFICIAL REPORT</button>
+    </section>
+
+    <section id="track" class="section hidden" data-tilt>
+      <h3>
+        <span><span class="section-icon">📊</span> Monitoring Center</span>
+        <span class="header-badge">Live Grievances</span>
+      </h3>
+
+      <!-- Search & Filter Block -->
+      <div class="filter-controls-group" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;">
+        <input type="text" id="userSearchInput" oninput="refreshTables()" placeholder="🔍 Search ID, Category, Location, Dept..." style="flex: 1; min-width: 200px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+        <select id="userFilterStatus" onchange="refreshTables()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Working">Working</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+        <select id="userFilterCategory" onchange="refreshTables()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+          <option value="All">All Categories</option>
+          <option value="Infrastructure">Infrastructure</option>
+          <option value="Water Supply">Water Supply</option>
+          <option value="Garbage Collection">Garbage Collection</option>
+          <option value="Street Lighting">Street Lighting</option>
+          <option value="Drainage">Drainage</option>
+          <option value="Public Safety">Public Safety</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="userFilterPriority" onchange="refreshTables()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+          <option value="All">All Priorities</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Critical">Critical</option>
+        </select>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Complaint ID</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th>Priority</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="userTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="map" class="section hidden" data-tilt>
+      <h3>
+        <span><span class="section-icon">🗺️</span> City Operations Map</span>
+        <span class="header-badge">Geospatial Overlay</span>
+      </h3>
+      <p class="section-desc">Live complaint markers across the metropolitan grid</p>
+      
+      <div class="map-stats-grid">
+        <div class="map-stat-card">
+          <span class="map-stat-label">Total Complaints</span>
+          <b class="map-stat-value" id="mapStatTotal">0</b>
+        </div>
+        <div class="map-stat-card">
+          <span class="map-stat-label">Pending Cases</span>
+          <b class="map-stat-value stat-gold" id="mapStatPending">0</b>
+        </div>
+        <div class="map-stat-card">
+          <span class="map-stat-label">In Progress</span>
+          <b class="map-stat-value stat-blue" id="mapStatWorking">0</b>
+        </div>
+        <div class="map-stat-card">
+          <span class="map-stat-label">Resolved</span>
+          <b class="map-stat-value stat-green" id="mapStatDone">0</b>
+        </div>
+      </div>
+      <div id="cityMap" class="city-map"></div>
+      <div class="map-legend" style="margin-bottom: 20px;">
+        <span class="legend-item"><i class="dot dot-pending"></i> Pending</span>
+        <span class="legend-item"><i class="dot dot-working"></i> Working</span>
+        <span class="legend-item"><i class="dot dot-done"></i> Done</span>
+      </div>
+
+      <!-- Complaint Hotspots Panel -->
+      <div class="hotspots-container">
+        <h4>🔥 Complaint Hotspots</h4>
+        <div id="hotspotList" class="hotspots-list">
+          <div class="no-hotspots">No active hotspots detected (locations with multiple complaints).</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin" class="section hidden" data-tilt>
+      <h3>
+        <span><span class="section-icon">🏛️</span> UrbanEye Administration Console</span>
+        <span class="header-badge">Admin Command Center</span>
+      </h3>
+
+      <!-- Admin Quick Actions -->
+      <div class="quick-actions-bar" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button type="button" class="secondary-btn" onclick="exportAdminReport()" style="margin: 0; width: auto; padding: 8px 16px;">📤 Export CSV</button>
+        <button type="button" class="secondary-btn" onclick="exportAllComplaintsPDF()" style="margin: 0; width: auto; padding: 8px 16px;">📄 Export PDF Summary</button>
+        <button type="button" class="secondary-btn" onclick="refreshAdminData()" style="margin: 0; width: auto; padding: 8px 16px;">🔄 Refresh Data</button>
+        <button type="button" class="secondary-btn" onclick="scrollToAdminSection('admin-hotspots')" style="margin: 0; width: auto; padding: 8px 16px;">🔥 View Hotspots</button>
+        <button type="button" class="secondary-btn" onclick="filterCriticalCases()" style="margin: 0; width: auto; padding: 8px 16px;">🚨 View Critical Cases</button>
+      </div>
+
+      <!-- Admin Dashboard Cards Grid -->
+      <div class="admin-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div class="stat-card" style="padding: 16px;">
+          <b id="adminStatTotal" style="font-size: 24px;">0</b>
+          <p style="font-size: 10px; margin-top: 4px; color: var(--text-muted); font-weight: 500;">📋 Total Complaints</p>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <b id="adminStatPending" class="stat-amber" style="font-size: 24px;">0</b>
+          <p style="font-size: 10px; margin-top: 4px; color: var(--text-muted); font-weight: 500;">🟡 Pending Cases</p>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <b id="adminStatWorking" class="stat-blue" style="font-size: 24px;">0</b>
+          <p style="font-size: 10px; margin-top: 4px; color: var(--text-muted); font-weight: 500;">🔵 In Progress</p>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <b id="adminStatDone" class="stat-green" style="font-size: 24px;">0</b>
+          <p style="font-size: 10px; margin-top: 4px; color: var(--text-muted); font-weight: 500;">🟢 Resolved Cases</p>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <b id="adminStatCritical" style="color: var(--danger); font-size: 24px;">0</b>
+          <p style="font-size: 10px; margin-top: 4px; color: var(--text-muted); font-weight: 500;">🚨 Critical Complaints</p>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <b id="adminStatHotspots" style="color: var(--gold); font-size: 24px;">0</b>
+          <p style="font-size: 10px; margin-top: 4px; color: var(--text-muted); font-weight: 500;">🔥 Active Hotspots</p>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <h4 style="margin-bottom: 12px; color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px;">📋 Complaint Management Records</h4>
+
+      <!-- Search & Filter Block -->
+      <div class="filter-controls-group" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;">
+        <input type="text" id="adminSearchInput" oninput="refreshTables()" placeholder="🔍 Search ID, Category, Location, Dept..." style="flex: 1; min-width: 200px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+        <select id="adminFilterStatus" onchange="refreshTables()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Working">Working</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+        <select id="adminFilterCategory" onchange="refreshTables()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+          <option value="All">All Categories</option>
+          <option value="Infrastructure">Infrastructure</option>
+          <option value="Water Supply">Water Supply</option>
+          <option value="Garbage Collection">Garbage Collection</option>
+          <option value="Street Lighting">Street Lighting</option>
+          <option value="Drainage">Drainage</option>
+          <option value="Public Safety">Public Safety</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="adminFilterPriority" onchange="refreshTables()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+          <option value="All">All Priorities</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Critical">Critical</option>
+        </select>
+      </div>
+
+      <div class="table-container" style="margin-bottom: 25px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Complaint ID</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th>Priority</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Administrative Complaint Map -->
+      <h4 style="margin-bottom: 12px; color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px;">🗺️ Administrative Complaint Map</h4>
+      <div id="adminMap" style="height: 350px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 25px; position: relative; z-index: 1;"></div>
+
+      <!-- Governance Analytics -->
+      <h4 style="margin-bottom: 12px; color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px;">📊 Governance Analytics</h4>
+      <div class="admin-analytics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div class="stat-card" style="padding: 16px;">
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 4px;">Most Reported Category</span>
+          <b id="adminAnalyticsTopCategory" style="font-size: 14px; color: var(--primary); font-weight: 700;">—</b>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 4px;">Most Affected Area</span>
+          <b id="adminAnalyticsTopArea" style="font-size: 14px; color: var(--gold); font-weight: 700;">—</b>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 4px;">Critical Complaint Count</span>
+          <b id="adminAnalyticsCriticalCount" style="font-size: 20px; color: var(--danger); font-weight: 700;">0</b>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 4px;">Resolution Rate</span>
+          <b id="adminAnalyticsResolutionRate" style="font-size: 20px; color: var(--success); font-weight: 700;">0%</b>
+        </div>
+        <div class="stat-card" style="padding: 16px;">
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 4px;">Avg Resolution Time</span>
+          <b id="adminAnalyticsAvgTime" style="font-size: 20px; color: var(--primary); font-weight: 700;">—</b>
+        </div>
+      </div>
+
+      <!-- Complaint Hotspots -->
+      <div id="admin-hotspots" style="margin-bottom: 25px;">
+        <h4 style="margin-bottom: 12px; color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px;">🔥 Complaint Hotspots</h4>
+        <div id="adminHotspotList" class="hotspots-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+          <!-- Dynamic List -->
+        </div>
+      </div>
+    </section>
+
+    <section id="analytics" class="section hidden" data-tilt>
+      <h3>
+        <span><span class="section-icon">📊</span> Urban Intelligence Analytics</span>
+        <span class="header-badge">Ministry Metrics</span>
+      </h3>
+      <div class="analytics-grid">
+        <div class="stat-card">
+          <b id="totalCount">0</b>
+          <p>Total Complaints</p>
+        </div>
+        <div class="stat-card">
+          <b id="pendingCount" class="stat-amber">0</b>
+          <p>Pending Cases</p>
+        </div>
+        <div class="stat-card">
+          <b id="doneCount" class="stat-green">0</b>
+          <p>Resolved Cases</p>
+        </div>
+        <div class="stat-card">
+          <b id="mappedCount">0</b>
+          <p>Mapped Complaints</p>
+        </div>
+      </div>
+
+      <!-- Analytics Charts -->
+      <div class="analytics-charts-grid">
+        <div class="chart-card">
+          <h4>📊 Complaints by Category</h4>
+          <div class="chart-wrapper">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h4>📈 Complaint Status Distribution</h4>
+          <div class="chart-wrapper">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h4>📉 Monthly Complaint Trend</h4>
+          <div class="chart-wrapper">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="dashboard-footer">
+    <span class="footer-left">© 2026 UrbanEye | Ministry of Urban Development & Smart Infrastructure</span>
+    <span class="footer-center"><span class="status-badge-green"><span class="pulse-dot"></span>System Status: ONLINE</span></span>
+    <span class="footer-right">Grievance Helpline: 1800-XXX-XXXX | Version 3.1</span>
+  </footer>
+</div>
+
+<!-- View/Edit Details Modal -->
+<div id="complaintModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle">Grievance Details</h3>
+      <button type="button" class="modal-close-btn" onclick="closeComplaintModal()" aria-label="Close modal">&times;</button>
+    </div>
+    <div id="modalBody" class="modal-body">
+      <!-- Dynamic content -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="secondary-btn" onclick="closeComplaintModal()" style="margin: 0; width: auto; padding: 8px 16px;">Close</button>
+      <button type="button" id="modalPdfBtn" onclick="exportCurrentComplaintPDF()" style="margin: 0; width: auto; padding: 8px 16px; background-color: var(--secondary); color: white; border: 1px solid var(--border);">📄 Export PDF</button>
+      <button type="button" id="modalSaveBtn" onclick="saveComplaintEdit()" style="margin: 0; width: auto; padding: 8px 16px;">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAGARI AI Chatbot -->
+<div id="nagariWidget" class="nagari-widget hidden">
+  <div id="nagariPanel" class="nagari-panel hidden" role="dialog" aria-label="NAGARI City Assistant">
+    <div class="nagari-header">
+      <div class="nagari-avatar">🤖</div>
+      <div class="nagari-title">
+        <strong style="display: block; font-size: 16px; margin-bottom: 2px;">🏛️ NAGARI</strong>
+        <span class="nagari-subtitle" style="display: block; font-size: 12px; color: var(--text-muted); font-weight: 600;">NAGARI — Smart City Intelligence Assistant</span>
+        <span class="nagari-subsubtitle" style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Government Governance AI Support</span>
+        <span class="nagari-online" style="font-size: 11px; font-weight: 700; color: var(--success);">🟢 NAGARI Intelligence Online</span>
+      </div>
+      <button type="button" class="nagari-close" id="nagariCloseBtn" aria-label="Close chat">×</button>
+    </div>
+    <div class="nagari-api-row">
+      <input type="password" id="nagariApiKey" placeholder="Anthropic API Key (session only)" autocomplete="off">
+    </div>
+    <div id="nagariMessages" class="nagari-messages"></div>
+    <div id="nagariTyping" class="nagari-typing hidden">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="nagari-input-row">
+      <input type="text" id="nagariInput" placeholder="Ask NAGARI about complaints, hotspots, analytics, or governance insights..." autocomplete="off">
+      <button type="button" id="nagariSendBtn">Send</button>
+    </div>
+  </div>
+  <button type="button" id="nagariToggle" class="nagari-fab" aria-label="Open NAGARI assistant">
+    <span class="nagari-fab-icon">🤖</span>
+    <span class="nagari-online-dot"></span>
+  </button>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
